@@ -1,0 +1,20 @@
+---
+title: "Contact Information"
+format:
+  html:
+    toc-location: left
+    html-math-method: katex
+    css: styles.css
+---
+
+If you would like to share any feedback or have any questions, please contact:
+
+## Rohit Batra
+
+![](www/github-mark.png){width=8%} [github/rohitbatra29](https://github.com/rohitbatra29)
+
+![](www/email-1-svgrepo-com.png){width=9%} <rbat@ucdavis.edu>
+
+# License
+
+[GPL-3.0 License](https://github.com/rohitbatra29/SimDE/blob/main/LICENSE)

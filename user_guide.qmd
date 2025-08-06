@@ -1,0 +1,539 @@
+---
+title: "USER GUIDE"
+format:
+  html:
+    toc: true
+    toc-location: left
+    html-math-method: katex
+    css: styles.css
+bibliography: references.bib
+---
+
+This app is intended for individuals interested in simulating and visualizing differential equation systems. This User Guide page will explain the array of features available to the users along with the necessary information for simulating these models. We also provide explanation of each of the different models along with the interpretation of their respective parameters.
+
+We greatly value your input as a user of this app and encourage you to share any thoughts or comments you may have while using it. Your feedback is invaluable to us!
+
+```{=html}
+<!--
+# Citation
+
+<..., mention about the different R packages, Julia, to cite >
+-->
+```
+Here's a schematic figure providing an overview of the simulation procedure using SimDE and the different features a user needs to define:
+
+![Overview of Simulation Procedure in SimDE](www/simulation_schematic.png)
+
+# Define Your Target System
+
+On the Simulate homepage of the app, you will see a prompt to define your target system and its various components.
+
+::: {.callout-tip collapse="true"}
+### What is a target system?
+
+A target system is a collection of variables that collectively define your psychological phenomenon of interest and SimDE is catered with the idea of defining and studying these systems. The goal is to convert out target systems into differential equation systems and study the appropriateness of these mathematical models for the phenomena of interest.
+:::
+
+## Number of Variables in the System
+
+You can choose either Univariate or Bivariate if you have 1 or 2 variables in your target system, respectively. Both these types of systems are separate panels in the app and will produce respective plots.
+
+## Type of Models and Order of the System
+
+Type of model is the functional form to define the behavior of the variable and you will see two types of models:
+
+-   Ordinary Differential Equation (ODE)
+
+ODEs are differential equation models where we have only one independent variable and one dependent variable. SimDE is focused on dynamical systems so the independent variable here is time ($t$) and the dependent variable is the process of interest ($x$ or $y$). These models are deterministic in nature and hence, they will produce the exact same output based on the set of input values and will not change.
+
+::: {.callout-tip collapse="true"}
+### What is a derivative and what is a differential?
+
+**Derivative**: A derivative of a process $y$ with respect to another process $t$ (time for systems in SimDE), is given by $\frac{dy}{dt}$. It is the rate of change in $y$ for a very small change in $t$.
+
+**Differential**: A differential of a process $dy$ is the infinitesimal change in $y$ relative to an infinitesimal change in $t$.
+:::
+
+-   Stochastic Differential Equation (SDE)
+
+SDEs are differential equation models with two parts on the right hand side: a deterministic and a stochastic component. They can be conceptualized as an extension of ODEs with the presence of a stochastic component in the equation, through which they allow for randomness to be modeled into the behavior of the process. In SimDE, the stochastic component or the dynamic errors are defined as a Brownian motion.
+
+::: {.callout-tip collapse="true"}
+### What is a Brownian Motion?
+
+A Brownian motion can be conceptualized as a random walk, where each step is independent from the history of previous steps, and the variability of the step size is proportional to the time elapsed before steps, $\Delta t$. We use the differential $dw_{t}$ to refer to the changes in this white noise dynamic errors for an infinitesimal time-interval $\Delta t$, which is scaled by the parameter $\sigma_{y}$. A distinctive feature of Brownian motion is that it is non-differentiable.
+
+The increments $dw_{t}$ are normally distributed with mean zero and variance proportional to $dt$, and they model unpredictable, random shocks to the system.
+:::
+
+Another classification used in SimDE for the type of models, is the order. You will see these models being categorized under either 1st-order or 2nd-order models.
+
+::: {.callout-tip collapse="true"}
+### What is an order of a differential equation?
+
+The order of a DE is the highest derivative of the dependent variable present in the equation. For example, the linear ODE model is of order 1 because it only has the first derivative ($\frac{dy}{dt}$) in the equation whereas the harmonic oscillator is of order 2 because the highest derivative is the second derivative ($\frac{d^{2}y}{dt^{2}}$) in the equation.
+:::
+
+We provide more details on each of the models, their interpretation and some example references in a later section.
+
+::: {.callout-note collapse="true"}
+### ODEs are in derivative form and SDEs are in differential form.
+
+In SimDE, all ODEs are written in the derivative form (e.g., $\frac{dy}{dt} = f(x)$) whereas all SDEs are written in the differential form (e..g, $dy = f(x) \cdot dt$). This is because SDEs use Brownian motion to represent the dynamic errors and Brownian motion is non-differentiable. However, it can be integrated and estimated with stochastic calculus. Hence, it is incorrect to write it in derivative form and as a result, we write SDEs in differential form.
+:::
+
+## Define Parameters
+
+This is where you will specify the different parameters for each of the models. As soon as you change the model option, the parameters will change based on the model choice.
+
+**Reset Parameters:** You also have the flexibility of resetting parameters and they will return to the preset values.
+
+**Set Your Seed or Random Seed:** In all the stochastic models with process noise, two additional input options for seed will be available. With *Set Your Seed*, you can specify your own seed value. This can be any integer between 1 and the maximum possible integer of the system (somewhere above 2 billion). With *Random Seed*, you can let the system choose a random integer between 1 and 1 million.
+
+::: callout-note
+## Hover Over Options
+
+When you hover over the options or parameters in the app, you will see a small tip window pop up which will explain the use of that option or provide more details such as the possible range of the parameter.
+:::
+
+For bivariate systems, there are two Parameter Panels, one for Variable X and the other for Variable Y.
+
+::: {.callout-important collapse="true"}
+### When the parameters are out of range?
+
+When you choose an input value for a parameter which is theoretically out of range for a stable system, then you will get a pop-up that notifies that the parameter is out of range. You can hover over the parameters to get the possible range of values they can take.
+:::
+
+### Initial Conditions
+
+Initial conditions are the starting values of the process at time $t_{0}$. They are specified under $y_{0}$ or $x_{0}$. They are used to start the numerical integration to discretize the process and proceed with the simulation. By setting the initial conditions, researchers can model specific onset scenarios and study their influence on the variables over time.
+
+## Define Time
+
+With SimDE, we are simulating the manifestations of a process at a particular timescale. Timescale is the interval at which a process is hypothesized to be functioning. For example, hourly, daily, or weekly.
+
+To simulate differential equation models, we need to define the following inputs for time:
+
+### Time Period (0, T)
+
+Time period defines the total period within which the process will be simulated. Since there is no default metric of what the values in the time period input mean (e.g., seconds, hours, days), time period will depend on the process of interest and the user's conceptualization of it. In SimDE, the first time point is always fixed to 0 and the users only need to define $T$, that is the last time point. The maximum time period that is possible is (0, 300).
+
+### Time Step $(\Delta t)$
+
+Time step refers to the difference between any two consecutive time points in the period of the simulation, $\Delta t = t_{k} \: – \:t_{k-1}$. It is also referred to as time interval or measurement interval. It is used to divide the time period into equally spaced intervals for observations.
+
+::: {.callout-tip collapse="true"}
+### Why not random time intervals?
+
+SimDE simulates observations at equidistant timepoints because it is convenient to use a constant time step. However, it is not necessary to have equidistant timepoints for data collection. DE models have been shown to be flexible to random time intervals between consecutive measurements and random intervals are often considered the better option for modeling oscillatory systems [@batra2023; @dehaan-rietdijk2017; @voelkle2013]
+:::
+
+### Number of Timepoints
+
+Number of timepoints refers to the exact time stamps at which the DE system is being manifested or observed within the given time period. The value of the time step along with the time period help determine the number of timepoints: $$N = \lfloor \frac{T – t_0} {\Delta t} \rfloor  + 1$$. Number of timepoints can be a helpful feature in determining how much data are required to capture specific trajectories or parameters, especially when a researcher has fewer data or a shorter period of a study.
+
+# Univariate Models
+
+We have 8 possible Univariate Models compatible with SimDE:
+
+-   1st-Order Models:
+
+    1.  Linear ODE
+    2.  Polynomial ODE
+    3.  Linear SDE (OU)
+    4.  Polynomial SDE
+
+-   2nd-Order Models:
+
+    5.  Harmonic Oscillator ODE
+    6.  Damped Oscillator ODE
+    7.  Harmonic Oscillator SDE
+    8.  Damped Oscillator SDE
+
+We provide a small gist of each model and the interpretation of each parameter in the model. We also provide example references for many of these models for further reading. These following terms will be common across all the models:
+
+-   $y_{t}$: The dependent variable that changes over time. It represents the system's state or value at time $t$.
+
+-   $t$: Time, the independent variable.
+
+-   $\frac{dy}{dt}$: The rate of change of $y_{t}$ with respect to time. This is the left-hand side of the differential equation and represents how fast the system is evolving at any given moment.
+
+-   $\frac{d^{2}y_{t}}{dt^{2}}$: The second derivative of $y_{t}$ with respect to time. It represents the acceleration or rate of change of the rate of change, showing how the velocity ($\frac{dy}{dt}$) of $y_{t}$ changes over time.
+
+-   $dy$: A very small or infinitesimal change in $y_{t}$ over time. It is used on the left hand side of stochastic differential equations to define the process dynamics.
+
+-   $d^{2}y_{t}$: This is the second-order infinitesimal change in $y_{t}$ over time. This is typically used in 2nd-order SDE models.
+
+-   $dw_{t}$: It is the increment of a Wiener process (also known as Brownian motion), which represents random white noise at the dynamic process level. This term appears in SDEs and introduces randomness to the system.
+
+-   $dt$: An infinitesimal time increment. It represents a very small step in time and is often used in both deterministic and stochastic models to represent continuous change over time.
+
+-   $dt^{2}$: An infinitestimal time increment squared to represent the second order changes in the system with respect to time.
+
+::: {.callout-tip collapse="true"}
+## What about measurement error?
+
+SimDE currently does not include measurement error in the simulation options and only limits to the dynamic/process error variance specification.
+:::
+
+## 1st Order Models
+
+1st-Order models include all those differential equation models which have the first-order changes on the left side of the equation, i.e., $\frac{dy}{dt}$.
+
+## 1. Linear ODE {#sec-linear_ode}
+
+A linear ODE is one of the most commonly used 1st-order model. It is a deterministic model and produces exponential trajectories of the process that describe the tendency of the process to return to a baseline (or equilibrium) over time.
+
+$$\frac{dy_{t}}{dt} \: = \: \beta \cdot (y_{t} \: - \: \mu)$$ The two parameters in this model are:
+
+-   $\beta$: The **auto-effect** parameter. A constant parameter representing the rate at which $y_{t}$ moves towards the equilibrium value $\mu$. This is also referred to as the *centralizing tendency* or the *force of the attractor*.\
+
+    -   Range: $[-\infty, 0]$\
+    -   When $y_{t} > \mu$, $y_{t}$ decreases (decays) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be negative.\
+    -   When $y_{t} < \mu$, $y_{t}$ increases (grow) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be positive.
+
+-   $\mu$: The **equilibrium** or baseline value that $y_{t}$ tends to approach over time. It is a constant and represents the system's steady-state or ideal value.
+
+    -   Range: $[-\infty, +\infty]$
+
+::: {.callout-note collapse="true"}
+## Why not $\beta > 0$?
+
+When $\beta > 0$, then the system moves away from the equilibrium $\mu$. Such parameter values lead to instability or divergence in the process, especially when these processes are coupled with other processes.
+:::
+
+**Reference Papers:** @butner2015; @boker2002
+
+## 2. Polynomial ODE {#sec-poly_ode}
+
+SimDE includes a polynomial ODE of degree 4, where the rate of change of $y_{t}$ depends on powers of $y_{t}$ up to the forth degree.
+
+$$\frac{dy_{t}}{dt} = \beta_{1} \: \cdot \: y_{t} \: + \: \beta_{2} \: \cdot \: y_{t}^{2} \: + \: \beta_{3} \: \cdot \: y_{t}^{3} \: + \: \beta_{4} \: \cdot \: y_{t}^{4} \: - \: \mu$$
+
+The five parameters in this model are:
+
+-   $\beta_{1}$: This is the same as the auto-effect parameter in Linear ODE. $\beta_{1}$ represents the strength of the first-degree (linear) $y_{t}$.\
+
+    -   Range: $[-\infty, 0]$\
+    -   When $y_{t} > \mu$, $y_{t}$ decreases (decays) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be negative.\
+    -   When $y_{t} < \mu$, $y_{t}$ increases (grow) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be positive.
+
+-   $\beta_{2}$: This is the quadratic parameter that represents the influence of square of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\beta_{3}$: This is the cubic parameter that represents the influence of cubic power of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\beta_{4}$: This is the quartic parameter that represents the influence of quartic of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\mu$: This $\mu$ is not the same as the equilibrium parameter in the Linear ODE. It acts more like an intercept or offset constant that essentially shifts the entire polynomial function up or down.
+
+    -   Range: $[-\infty, +\infty]$\
+
+::: {.callout-note collapse="true"}
+## What does the range of the $\beta$'s mean?
+
+It is difficult to understand what exactly should be the range of the quadratic, cubic or quartic parameters. But based on the simulation, if these values are bigger than 0, then the process diverges and becomes instable. Hence, we limited these parameters to a similar range as the linear parameter.
+:::
+
+## 3. Linear SDE (OU) {#sec-ou}
+
+Linear SDE constitutes both deterministic and stochastic components. It is also referred to as the Ornstein-Uhlenbeck (OU) model and is one of the most commonly used differential equation model used in Psychology. It can be conceptualized as the continuous-time or differential equation version of the autoregressive model.
+
+$$dy_{t} \: = \: \beta \cdot (y_{t} - \mu) \cdot dt \: + \: \sigma \cdot dw_{t}$$ $\beta \cdot (y_{t} - \mu) \cdot dt$ forms the deterministic component of the model whereas $\sigma \cdot dw_{t}$ is the stochastic component.
+
+The three parameters in the model are:
+
+-   $\beta$: The **auto-effect** parameter. A constant parameter representing the rate at which $y_{t}$ moves towards the equilibrium value $\mu$. This is also referred to as the *centralizing tendency* or the *force of the attractor*.\
+
+    -   Range: $[-\infty, 0]$\
+    -   When $y_{t} > \mu$, $y_{t}$ decreases (decays) towards $\mu$ over time, as the infinitesimal change $dy_{t}$ will be negative.\
+    -   When $y_{t} < \mu$, $y_{t}$ increases (grow) towards $\mu$ over time, as the rate of change $dy_{t}$ will be positive.
+
+-   $\mu$: The **equilibrium** or baseline value that $y_{t}$ tends to approach over time. It is a constant and represents the system's steady-state or ideal value.
+
+    -   Range: $[-\infty, +\infty]$
+
+-   $\sigma$: The dynamic error **scaling** parameter which scales the volatility or intensity of the random fluctuations in the dynamic model.
+
+    -   Range: $[0, +\infty]$
+    -   When $\sigma = 0$, the model reduces to a Linear ODE.
+
+::: {.callout-tip collapse="true"}
+## Why do stochastic equations look different than ordinary equations?
+
+In SimDE, all ODEs are written in the derivative form (e.g., $\frac{dy}{dt} = f(x)$) whereas all SDEs are written in the differential form (e..g, $dy = f(x) \cdot dt$). This is because SDEs use Brownian motion to represent the dynamic errors and Brownian motion is non-differentiable. However, it can be integrated and estimated with stochastic calculus. Hence, it is incorrect to write it in derivative form and as a result, we write SDEs in differential form.
+:::
+
+**Reference Papers:** @kuppens2010; @voelkle2012; @oravecz2011
+
+## 4. Polynomial SDE {#sec-poly_sde}
+
+Similar to a polynomial ODE of degree 4, where the rate of change of $y_{t}$ depends on powers of $y_{t}$ up to the forth degree, but now with an additional stochastic component.
+
+$$dy_{t} \: = \: (\beta_{1} \cdot y_{t} \: + \: \beta_{2} \cdot y_{t}^{2} \: + \: \beta_{3} \cdot y_{t}^{3} \: + \: \beta_{4} \cdot y_{t}^{4} \: - \: \mu) \cdot dt \: + \: \sigma \cdot dw_{t}$$
+
+The six parameters in this model are:
+
+-   $\beta_{1}$: This is the same as the auto-effect parameter in Linear ODE. $\beta_{1}$ represents the strength of the first-degree (linear) $y_{t}$.\
+
+    -   Range: $[-\infty, 0]$\
+    -   When $y_{t} > \mu$, $y_{t}$ decreases (decays) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be negative.\
+    -   When $y_{t} < \mu$, $y_{t}$ increases (grow) towards $\mu$ over time, as the rate of change $\frac{dy_{t}}{dt}$ will be positive.
+
+-   $\beta_{2}$: This is the quadratic parameter that represents the influence of square of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\beta_{3}$: This is the cubic parameter that represents the influence of cubic power of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\beta_{4}$: This is the quartic parameter that represents the influence of quartic of the process $y_{t}$ on the rate of change.\
+
+    -   Range: $[-\infty, 0]$
+
+-   $\mu$: This $\mu$ is not the same as the equilibrium parameter in the Linear ODE. It acts more like an intercept or offset constant that essentially shifts the entire polynomial function up or down.
+
+    -   Range: $[-\infty, +\infty]$
+
+-   $\sigma$: The dynamic error **scaling** parameter which scales the volatility or intensity of the random fluctuations in the dynamic model.
+
+    -   Range: $[0, +\infty]$
+    -   When $\sigma = 0$, the model reduces to a Polynomial ODE.
+
+## 2nd Order Models
+
+2nd-Order models include all those differential equations which define the second-order changes in the process, i.e., $\frac{d^{2}y_{t}}{dt^{2}}$
+
+## 5. Harmonic Oscillator (Undamped) ODE {#sec-harmonic_ode}
+
+This model describes simple harmonic motion, where the process oscillates around its equilibrium (or steady-state value) over time. It is called undamped because it does not dampen over time but stays oscillating.
+
+$$\frac{d^{2}y_{t}}{dt^{2}} \: = \: \omega \cdot (y_{t} \: - \: \mu)$$ The two parameters in this model are:
+
+-   $\omega$: This is the **frequency** parameter of an oscillator. It determines how quickly the system oscillates around the equilibrium point $\mu$.
+
+    -   Range: $[-\infty, 0]$
+    -   Higher values of $|\omega|$ imply more faster oscillations.
+
+-   $\mu$: The **equilibrium** or steady-state value around which $y_{t}$ oscillates. It represents the stable position the system would return to if undisturbed.
+
+    -   Range: $[-\infty, +\infty]$
+
+::: {.callout-warning collapse="true"}
+## Why is $\omega$ negative in SimDE?
+
+For the sake of consistency in defining the displacement of the process from its equilibrium (i.e., $(y_{t} \: - \: \mu)$), the frequency has to be negative. The interpretation of the frequency can still be done in a similar vain as we simply just take the absolute value of the $\omega$.
+:::
+
+**Reference Papers:** @chow2005; @chow2019
+
+## 6. Damped Oscillator ODE {#sec-damp_ode}
+
+Damped oscillator is similar to a Harmonic oscillator such that it oscillates around an equilibrium but over time it will either dampen towards or amplify away from this stable equilibrium. Hence, damped oscillators have two terms: one that determines the oscillations around equilibrium and the other that slows these oscillations over time to bring the system back to this equilibrium.
+
+$$\frac{d^{2}y_{t}}{dt^{2}} \: = \: \omega \cdot (y_{t} \: - \: \mu) \: + \: \zeta \cdot \frac{dy_{t}}{dt}$$ The three parameters of a damped oscillator are:
+
+-   $\omega$: This is the **frequency** parameter of an oscillator. It determines how quickly the system oscillates around the equilibrium point $\mu$.
+
+    -   Range: $[-\infty, 0]$
+    -   Higher values of $|\omega|$ imply more faster oscillations.
+
+-   $\mu$: The **equilibrium** or steady-state value around which $y_{t}$ oscillates. It represents the stable position the system would return to if undisturbed.
+
+    -   Range: $[-\infty, +\infty]$
+
+-   $\zeta$: The **damping** parameter where $\zeta \cdot \frac{dy_{t}}{dt}$ is the damping term of the model. This parameter controls the changes in the oscillations and if they become smaller or larger in magnitude over time.
+
+    -   Range: $[-\infty, +\infty]$
+    -   When $\zeta < 0$, the system is damped over time. Smaller values of $\zeta$ (i.e., more negative values) of the damping parameter imply stronger damping.
+    -   When $\zeta > 0$, the system is amplified over time. Larger values of $\zeta$ (i.e, more positive values) imply stronger amplification.
+
+**Reference Papers:** @boker2002a; @chow2005; @chow2019
+
+## 7. Harmonic Oscillator (Undamped) SDE {#sec-harmonic_sde}
+
+This model describes simple harmonic motion, where the process oscillates around its equilibrium over time and an additional random perturbation to this motion. The model is still undamped but the amplitude is affected due to random perturbation. Similar to other SDE models, this model also has a deterministic component (i.e., $\left( \omega \cdot (y_{t} \: - \: \mu) \right) dt^{2}$) and a stochastic component (i.e., $\sigma \cdot dW_{t}$):
+
+$$ d^{2}y_{t} \: = \: \left( \omega \cdot (y_{t} \: - \: \mu) \right) dt^{2} \: + \: \sigma \cdot dW_{t} $$ The three parameters in this model are:
+
+-   $\omega$: This is the **frequency** parameter of an oscillator. It determines how quickly the system oscillates around the equilibrium point $\mu$.
+
+    -   Range: $[-\infty, 0]$
+    -   Higher values of $|\omega|$ imply more faster oscillations.
+
+-   $\mu$: The **equilibrium** or steady-state value around which $y_{t}$ oscillates. It represents the stable position the system would return to if undisturbed.
+
+    -   Range: $[-\infty, +\infty]$
+
+-   $\sigma$: The dynamic error **scaling** parameter which scales the volatility or intensity of the random fluctuations in the dynamic model.
+
+    -   Range: $[0, +\infty]$
+    -   When $\sigma = 0$, the model reduces to a Harmonic Oscillator ODE.
+
+**Reference Papers:** @chow2005
+
+## 8. Damped Oscillator SDE {#sec-damp_sde}
+
+This is a stochastic oscillator which contains oscillations that may dampen or amplify over time. This model has three components: 1) the first component determines the oscillations around equilibrium; 2) the second component slows these oscillations over time to bring the system back to this equilibrium; 3) the third component introduces randomness to the oscillations:
+
+$$
+d^{2}y_{t} \: = \: \left( \omega \cdot (y_{t} \: - \: \mu) \: + \: \zeta \cdot \frac{dy_{t}}{dt} \right) dt^{2} \: + \: \sigma \cdot dW_{t}
+$$ The four parameters in this model are:
+
+-   $\omega$: This is the **frequency** parameter of an oscillator. It determines how quickly the system oscillates around the equilibrium point $\mu$.
+
+    -   Range: $[-\infty, 0]$
+    -   Higher values of $|\omega|$ imply more faster oscillations.
+
+-   $\mu$: The **equilibrium** or steady-state value around which $y_{t}$ oscillates. It represents the stable position the system would return to if undisturbed.
+
+    -   Range: $[-\infty, +\infty]$
+
+-   $\zeta$: The **damping** parameter where $\zeta \cdot \frac{dy_{t}}{dt}$ is the damping term of the model. This parameter controls the changes in the oscillations and if they become smaller or larger in magnitude over time.
+
+    -   Range: $[-\infty, +\infty]$
+    -   When $\zeta < 0$, the system is damped over time. Smaller values of $\zeta$ (i.e., more negative values) of the damping parameter imply stronger damping.
+    -   When $\zeta > 0$, the system is amplified over time. Larger values of $\zeta$ (i.e, more positive values) imply stronger amplification.
+
+-   $\sigma$: The dynamic error **scaling** parameter which scales the volatility or intensity of the random fluctuations in the dynamic model.
+
+    -   Range: $[0, +\infty]$
+    -   When $\sigma = 0$, the model reduces to a Damped Oscillator ODE.
+
+**Reference Papers:** @voelkle2013; @chow2019
+
+# Bivariate Models
+
+SimDE offers a bivariate panel where users can select the type of model for both Variable X and Variable Y from the following options:
+
+1.  Linear ODE (@sec-linear_ode)
+2.  Linear SDE - OU (@sec-ou)
+3.  Harmonic Oscillator (Undamped) ODE (@sec-harmonic_ode)
+4.  Damped Oscillator ODE (@sec-damp_ode)
+5.  Harmonic Oscillator SDE (@sec-harmonic_sde)
+6.  Damped Oscillator SDE (@sec-damp_sde)
+
+With these six models available for both X and Y, and the addition of two coupling options, SimDE supports a total of 72 possible bivariate model combinations.
+
+## Coupling
+
+Coupling defines the influence of one variable on the other and the parameters involved are called **coupling parameters**. The user will have the option to choose the following two types of coupling:
+
+### Variable-Centered Coupling {#sec-var_coupling}
+
+In variable-centered coupling, the behavior of each variable is influenced not only by its own dynamics but also by the difference between itself and the other variable. An example system of a coupled Linear ODE can be written as:
+
+$$\begin{align*}
+    \frac{dx_{t}}{dt} \: &= \: \beta_{x} \cdot (x_{t} \: - \: \mu_{x}) \: + \: \gamma_{x} \cdot (x_{t} - y_{t}) \\
+    \frac{dy_{t}}{dt} \: &= \: \beta_{y} \cdot (y_{t} \: - \: \mu_{y}) \: + \: \gamma_{y} \cdot (y_{t} - x_{t})
+\end{align*}$$
+
+#### Self-Regulatory Components:
+
+-   $\beta_{x} \cdot (x_{t} \: - \: \mu_{x})$: This is the self-regulation component of X's functioning.
+
+    -   The derivative $\frac{dx_{t}}{dt}$ describes the changes in $x_{t}$ as a function of two parameters $\mu_{x}$ and $\beta_{x}$.\
+    -   The $\mu_{x}$ parameter represents the equilibrium or ideal level of the process.
+    -   The $\beta_{x}$ parameter represents how much the changes depend on the current value of the process $x_{t}$ and its departure from the ideal level $\mu_{x}$.
+
+-   $\beta_{y} \cdot (y_{t} \: - \: \mu_{y})$: This is the self-regulation component of Y's functioning.
+
+    -   The derivative $\frac{dy_{t}}{dt}$ describes the changes in $y_{t}$ as a function of two parameters $\mu_{y}$ and $\beta_{y}$
+    -   The $\mu_{y}$ parameter represents the equilibrium or ideal level of the process.
+    -   The $\beta_{y}$ parameter represents how much the changes depend on the current value of the process $x_{t}$ and its departure from the ideal level $\mu_{y}$.
+
+#### Co-Regulatory Components:
+
+-   $\gamma_{x} \cdot (x_{t} - y_{t})$: This is the co-regulation component of X's functioning which captures the influence of how far $x$ is from $y$, and $\gamma_{x}$ represents the strength of this influence.
+-   $\gamma_{y} \cdot (y_{t} - x_{t})$: This is the co-regulation component of Y's functioning which captures the influence of how far $y$ is from $x$, and $\gamma_{y}$ represents the strength of this influence.
+
+#### Coupling Parameters:
+
+-   $\gamma_{x}$ and $\gamma_{y}$ are the two coupling parameters which represent the strength of this difference between $x$ and $y$ on each of the variables.
+
+    -   Range of $\gamma_{x}, \gamma_{y}$: $[-\infty, +\infty]$
+
+-   Direction of influence for $\gamma_{x}$:
+
+    -   If $\gamma_{x} > 0$ and $x_{t} > y_{t}$, then $x_{t}$ is pushed further away from $y_{t}$, amplifying their difference.
+    -   If $\gamma_{x} > 0$ and $x_{t} < y_{t}$, then $x_{t}$ is pulled closer to $y_{t}$, reducing the difference between them.
+    -   When $\gamma_{x} < 0$, the above behavior would be reversed, i.e., $x_{t}$ will be pushed away or pulled closer to $y_{t}$ if $x_{t}$ is smaller or larger than $y_{t}$, respectively.
+
+-   Direction of influence for $\gamma_{y}$:
+
+    -   If $\gamma_{y} > 0$ and $y_{t} > x_{t}$, then $y_{t}$ is pushed further away from $x_{t}$, amplifying their difference.
+    -   If $\gamma_{y} > 0$ and $y_{t} < x_{t}$, then $y_{t}$ is pulled closer to $x_{t}$, reducing the difference between them.
+    -   When $\gamma_{y} < 0$, the above behavior would be reversed, i.e., $y_{t}$ will be pushed away or pulled closer to $x_{t}$ if $y_{t}$ is smaller or larger than $x_{t}$, respectively.
+
+#### Example Scenarios:
+
+-   **Attraction or Synchrony (**$\gamma_{x} < 0$ and $\gamma_{y} < 0$): Both variables are pulled towards each other, leading to *convergent dynamics*. This represents a situation where the two systems tend to align or synchronize over time.
+-   **Repulsion or Divergence (**$\gamma_{x} > 0$ and $\gamma_{y} > 0$): Both variables push each other away, leading to *divergent dynamics*. This represents a situation where the two processes stay apart from each other over time.
+-   **Asymmetric Interaction**: When one of the parameter is 0 and the other is not, that represents a situation where one system does not respond to the other whereas the other is still dependent. For example, when $\gamma_{x} = 0$ but $\gamma_{y} > 0$), then $x_{t}$ does not respond to $y_{t}$, but $y_{t}$ is still pushed away from $x_{t}$ over time.
+
+### Mean-Centered Coupling
+
+In mean-centered coupling, the mean-centered value of the influencing variable is used to account for the coupling. An example system of a Linear ODE with mean-centered coupling can be written as:
+
+$$
+\begin{align*}
+    \frac{dx_{t}}{dt} \: &= \: \beta_{x} \cdot (x_{t} \: - \: \mu_{x}) \: + \: \gamma_{x} \cdot (y_{t} \: - \: \mu_{y}) \\
+    \frac{dy_{t}}{dt} \: &= \: \beta_{y} \cdot (y_{t} \: - \: \mu_{y}) \: + \: \gamma_{y} \cdot (x_{t} \: - \: \mu_{x})
+\end{align*}
+$$
+
+#### Self-Regulatory Components:
+
+These remain the same as the interpretation in Variable-Centered Coupling (@sec-var_coupling).
+
+#### Co-Regulatory Components:
+
+-   $\gamma_{x} \cdot (y_{t} \: - \: \mu_{y})$: This is the co-regulation component of X's functioning which represents how much the changes in $y_{t}$ will affect the evolution of changes in $x_{t}$. Specifically, if $y_{t}$ deviates from $\mu_{y}$, it will exert an influence on $x_{t}$ through $\gamma_{x}$.
+-   $\gamma_{y} \cdot (x_{t} \: - \: \mu_{x}$: This is the co-regulation component of Y's functioning which represents how much the changes in $x_{t}$ will affect the evolution of changes in $y_{t}$. Specifically, if $x_{t}$ deviates from $\mu_{x}$, it will exert an influence on $y_{t}$ through $\gamma_{y}$.
+
+#### Coupling Parameters:
+
+-   $\gamma_{x}$ and $\gamma_{y}$ are the two coupling parameters which represent the strength of influence of $y_{t}$ on $x_{t}$ and $x_{t}$ on $y_{t}$, respectively.
+
+    -   Range of $\gamma_{x}, \gamma_{y}$: $[-\infty, +\infty]$
+
+-   Direction of influence for $\gamma_{x}$:
+
+    -   If $\gamma_{x} > 0$ and $y_{t} > \mu_{y}$, then $x_{t}$ is pushed further away from $y_{t}$, amplifying the distance between these two processes.
+    -   If $\gamma_{x} > 0$ and $y_{t} < \mu_{y}$, then $x_{t}$ is pulled closer to $y_{t}$, reducing the distance between them.
+    -   When $\gamma_{x} < 0$, the above behavior would be reversed, i.e., $x_{t}$ will be pushed away or pulled closer to $y_{t}$ if $y_{t}$ is smaller or larger than $\mu_{y}$, respectively.
+
+-   Direction of influence for $\gamma_{y}$:
+
+    -   If $\gamma_{y} > 0$ and $x_{t} > \mu_{x}$, then $y_{t}$ is pushed further away from $x_{t}$, amplifying the distance between these two processes.
+    -   If $\gamma_{y} > 0$ and $x_{t} < \mu_{x}$, then $y_{t}$ is pulled closer to $x_{t}$, reducing the distance between them.
+    -   When $\gamma_{y} < 0$, the above behavior would be reversed, i.e., $y_{t}$ will be pushed away or pulled closer to $x_{t}$ if $x_{t}$ is smaller or larger than $\mu_{x}$, respectively.
+
+# Plots
+
+In both the univariate and bivariate panels, users will see a ![](www/generate.png){width="25%"} button. Once you've specified the inputs in SimDE for your model parameters, you can press this button to generate a plot for your output. Some models take longer to run, so every time you press this button, the app will try to simulate and plot. Hence, some visualizations might have a lag before they appear. Users will notice a rotating circle while SimDE tries to simulate and plot those systems which take longer.
+
+::: callout-caution
+## Julia's Run Time
+
+Most of the stochastic models in the SimDE app are being run with Julia in the background. You might notice a few seconds delay for the plot to be produced if it's the first time loading Julia for a plot or complex set of values. Please be patient with these complex systems.
+:::
+
+# Softwares and Packages Used
+
+SimDE is build on R Shiny framework [@chang2017] and uses both R and Julia in the background to simulate the differential equation models. Following are the packages used for simulating these models:
+
+-   *deSolve* [@soetaert2010]
+-   *Sim.DiffProc* [@guidoum2020]
+-   *diffeqr*: Interface package to Julia's package *DifferentialEquations.jl* [@rackauckas2017]
+
+# References
+
+::: {#refs}
+:::
